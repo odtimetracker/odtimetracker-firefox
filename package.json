@@ -1,0 +1,15 @@
+{
+  "title": "odTimeTracker",
+  "name": "odtimetracker-client",
+  "version": "0.0.1",
+  "description": "Client for odTimeTracker in form of an add-on for Mozilla Firefox.",
+  "main": "index.js",
+  "author": "Ondřej Doněk",
+  "engines": {
+    "firefox": ">=38.0a1"
+  },
+  "license": "MPL-2.0",
+  "keywords": [
+    "jetpack"
+  ]
+}
