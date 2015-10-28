@@ -2,81 +2,101 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-var { Cu } = require('chrome');
-var pageMod = require('sdk/page-mod');
-var panels = require('sdk/panel');
 var self = require('sdk/self');
-var tabs = require('sdk/tabs');
-var ui = require('sdk/ui');
-var panelUrl = self.data.url('page.html');
-var serverUrl = 'http://odtimetracker.local';
+var { Cc, Ci, Cu } = require('chrome');
+//var { setTimeout, clearTimeout } = require('sdk/timers');
+var { ToggleButton } = require('sdk/ui/button/toggle');
+var { Panel } = require('sdk/panel');
+
+Cu.import('resource://gre/modules/Task.jsm');
 
 /**
- * @param {Tab} aTab
- * @returns {void}
+ * @type {Object} Add-on's preferences.
  */
-function onPanelReady(aTab) {
-	var worker = aTab.attach({
-		contentScriptFile: self.data.url('page.js')
-	});
+const ADDON_PREFS = require('sdk/simple-prefs').prefs;
 
-	// Listen for request for close page (tab).
-	worker.port.on('close', function() {
-    console.log('"close" emmitted');
-		worker.tab.close();
-	});
+/**
+ * @type {String} Add-on's name taken from `package.json`.
+ */
+const ADDON_NAME = require('./package.json').name;
 
-	// Listen for request for refreshing dataview
-	worker.port.on('refresh', function() {
-    console.log('"refresh" emmitted');
-		//refreshDataView(worker);
-	});
+/** 
+ * @type {String} Add-on's title taken from `package.json`.
+ */
+const ADDON_TITLE = require('./package.json').title;
 
-	// Listen for saving new URL
-	worker.port.on('insert', function(aUrl) {
-    console.log('"insert" emmitted');
-	});
+/**
+ * @type {Object} Some utilities.
+ */
+var utils = require('lib/utils');
 
-	// Listen for URLs removal request
-	worker.port.on('delete', function(aUrlIds) {
-    console.log('"delete" emmitted');
-	});
+/**
+ * @type {Object} Access to the storage.
+ * @todo Here we will in future include either `lib/storage-sqlite` or 
+ *       `lib/storage-jsonrpc` according to actual user preferences.
+ */
+var storage = require('lib/storage-sqlite');
 
-	worker.port.emit('load', null);
-} // end onPanelReady(aTab)
-
-// Panel attached to main toolbar button
-var MainPanel = panels.Panel({
-  contentURL: panelUrl,
-  onHide: handleMainPanelHide
-});
-
-// Main toolbar button.
-var MainButton = ui.ToggleButton({
-	id: 'odtimetracker-btn',
+/**
+ * Add-on's main toolbar button.
+ * @var {ToggleButton} gToolbarButton
+ */
+var gToolbarButton = ToggleButton({
   badge: '⏵',//∎⏸⏵⏯⏮⏭⏬⏩⏪⏫‣
-	label: 'odTimeTracker',
-	icon: {
-		16: self.data.url('icon-16.png'),
-		32: self.data.url('icon-32.png'),
-		64: self.data.url('icon-64.png')
-	},
-	onChange: handleMainButtonChange
+  badgeColor: utils.getThemeColor(),
+  //disabled: true,
+  icon: {
+    '16': self.data.url('icon-16.png'),
+    '32': self.data.url('icon-32.png'),
+    '64': self.data.url('icon-64.png')
+  },
+  id: ADDON_NAME + '-button',
+  label: ADDON_TITLE,
+  onChange: handleToolbarButton
 });
 
 /**
- * @returns {void}
+ * Add-on's panel attached to the toolbar button.
+ * @var {Panel} gToolbarPanel
  */
-function handleMainPanelHide() {
-  MainButton.state('window', {checked: false});
-} // end handleMainPanelHide()
+var gToolbarPanel = Panel({
+  contentURL: self.data.url('panel-startstop/index.html'),
+  contentScriptFile: self.data.url('panel-startstop/index.js'),
+  contentStyleFile: self.data.url('panel-startstop/index.css'),
+  width: 400,
+  height: 420,
+  /**
+   * Called when panel is shown.
+   */
+  onShow: function () {
+    gToolbarPanel.port.emit('show', ADDON_PREFS.contentStyle);
+  },
+  /**
+   * Called when panel is hiding - switching checked of the main toolbar button.
+   */
+  onHide: function () {
+    gToolbarPanel.port.emit('hide');
+    gToolbarButton.state('window', { checked: false });
+  }
+});
 
 /**
+ * Handles click on main toolbar button.
  * @param {Object} aState
- * @returns {void}
  */
-function handleMainButtonChange(aState) {
-  if (aState.checked) {
-    MainPanel.show({ position: MainButton });
+function handleToolbarButton(aState) {
+  if (aState.checked === true) {
+    gToolbarPanel.show({ position: gToolbarButton });
   }
-} // end onMainButtonChange()
+} // end handleToolbarButton(aState)
+
+/**
+ * Listener for change value of `contentStyle` preference.
+ */
+function onContentStylePrefChange() {
+  gToolbarButton.badgeColor = utils.getThemeColor();
+  gToolbarPanel.port.emit('style', ADDON_PREFS.contentStyle);
+} // end onContentStylePrefChange()
+
+// Listens to preferences values changes.
+require('sdk/simple-prefs').on('contentStyle', onContentStylePrefChange);

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<!--
+ - This Source Code Form is subject to the terms of the Mozilla Public
+ - License, v. 2.0. If a copy of the MPL was not distributed with this
+ - file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ -->
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1, width=device-width">
+		<title>odTimeTracker</title>
+		<link href="../icon16.png" type="image/png" rel="shortcut icon">
+		<link href="index.css" type="text/css" rel="stylesheet">
+	</head>
+	<body class="bg50">
+		<header class="bg500">
+			<h1>odTimeTracker</h1>
+		</header>
+		<div class="content" id="main">
+			<div class="panel">
+		    <form id="startForm">
+		      <input type="hidden" id="startForm-projectId" value="">
+		      <div class="input-group first">
+		        <!--<label for="startForm-name">Name</label>-->
+		        <input type="text" id="startForm-name" value="" class="text-input" placeholder="Name&hellip;">
+		        <div class="bar"></div>
+		      </div>
+	        <div class="input-group">
+		        <!--<label for="startForm-name">Project</label>-->
+	          <input type="text" id="startForm-project" value="" class="text-input" placeholder="Project name&hellip;">
+		        <div class="bar"></div>
+	        </div>
+	        <div class="input-group">
+		        <!--<label for="startForm-name">Tags</label>-->
+	          <input type="text" id="startForm-tags" value="" class="text-input" placeholder="Tag1,Tag2,&hellip;">
+		        <div class="bar"></div>
+	        </div>
+	        <div class="input-group">
+		        <!--<label for="startForm-name">Description</label>-->
+	          <textarea type="text" id="startForm-desc" value="" class="text-input" placeholder="Description&hellip;"></textarea>
+		        <div class="bar"></div>
+	        </div>
+	        <input type="submit" id="startForm-submit" value="Start activity" class="button button-raised">
+		    </form><!--/ #startForm -->
+		  </div>
+			<div class="panel hide">
+		    <form id="stopForm">
+		      <div id="runningActivity"></div>
+		        <div class="form-row">
+		          <input type="submit" id="stopForm-submit" value="Stop activity">
+		        </div>
+		    </form><!--/ #stopForm --></div>
+		</div>
+	</body>
+</html>

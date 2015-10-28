@@ -1,0 +1,22 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+@import url("../material-design/material-design.css");
+
+body {
+  background-color: #fff;
+}
+
+.panel {
+  background-color: #fff;
+  padding: 0px 22px 0px 22px;
+}
+
+.input-group { margin: 10px 0px 10px 0px; }
+.input-group.first { margin-top: 0px; }
+
+input[type="submit"] {
+  float: right;
+  margin-top: 40px;
+}
