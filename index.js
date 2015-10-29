@@ -100,3 +100,21 @@ function onContentStylePrefChange() {
 
 // Listens to preferences values changes.
 require('sdk/simple-prefs').on('contentStyle', onContentStylePrefChange);
+
+// Start with checking if there is any running activity or not
+// TODO When is fresh install the SQLite storage throws here error because is not initialized yet!
+storage.activitySelect({
+  'selectRunning': true
+}).then(
+  function (aResult) {
+    if (aResult.length === 0) {
+      console.log('There is no running activity...');
+    } else {
+      console.log('There is a running activity...', aResult[0]);
+      gToolbarPanel.port.emit('update', { 'runningActivity': aResult[0] });
+    }
+  },
+  function (aError) {
+    console.log(aError);
+  }
+);

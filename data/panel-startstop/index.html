@@ -17,7 +17,7 @@
 			<h1>odTimeTracker</h1>
 		</header>
 		<div class="content" id="main">
-			<div class="panel">
+			<div id="startFormPanel" class="panel">
 		    <form id="startForm">
 		      <input type="hidden" id="startForm-projectId" value="">
 		      <div class="input-group first">
@@ -43,12 +43,10 @@
 	        <input type="submit" id="startForm-submit" value="Start activity" class="button button-raised">
 		    </form><!--/ #startForm -->
 		  </div>
-			<div class="panel hide">
+			<div id="stopFormPanel" class="panel hide">
 		    <form id="stopForm">
 		      <div id="runningActivity"></div>
-		        <div class="form-row">
-		          <input type="submit" id="stopForm-submit" value="Stop activity">
-		        </div>
+	        <input type="submit" id="stopForm-submit" value="Stop activity" class="button button-raised">
 		    </form><!--/ #stopForm --></div>
 		</div>
 	</body>
